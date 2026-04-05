@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, ArrowUpRight, ArrowDownRight, Trash2, Search, Filter } from 'lucide-react';
 import API from '../api/axios';
 import { formatCurrency } from '../utils/currency';
+import CustomSelect from '../components/reusable/CustomSelect';
 
 const Transactions = ({ currency = 'USD' }) => {
     const navigate = useNavigate();
@@ -62,12 +63,6 @@ const Transactions = ({ currency = 'USD' }) => {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10">
                 {/* Header */}
                 <div className="flex items-center gap-4 mb-8">
-                    <button
-                        onClick={() => navigate('/dashboard')}
-                        className="p-2.5 bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 rounded-xl transition-all"
-                    >
-                        <ArrowLeft className="w-5 h-5 text-zinc-400" />
-                    </button>
                     <div>
                         <h1 className="text-3xl font-bold bg-gradient-to-r from-white to-zinc-400 bg-clip-text text-transparent">
                             All Transactions
@@ -79,15 +74,16 @@ const Transactions = ({ currency = 'USD' }) => {
                 {/* Filters */}
                 <form onSubmit={handleSearch} className="p-4 rounded-2xl bg-zinc-900/50 border border-zinc-800/50 backdrop-blur-xl mb-6">
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                        <select
+                        <CustomSelect
                             value={filters.type}
-                            onChange={e => setFilters(f => ({ ...f, type: e.target.value }))}
-                            className="bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-sm text-white outline-none focus:border-purple-500/50"
-                        >
-                            <option value="">All Types</option>
-                            <option value="INCOME">Income</option>
-                            <option value="EXPENSE">Expense</option>
-                        </select>
+                            onChange={(val) => setFilters(f => ({ ...f, type: val }))}
+                            placeholder="All Types"
+                            options={[
+                                { value: '', label: 'All Types' },
+                                { value: 'INCOME', label: 'Income' },
+                                { value: 'EXPENSE', label: 'Expense' },
+                            ]}
+                        />
                         <input
                             type="text"
                             placeholder="Category..."

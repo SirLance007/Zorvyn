@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { LogOut, Plus, Wallet, TrendingUp, TrendingDown, DollarSign, IndianRupee } from 'lucide-react';
+import { Plus, Wallet, TrendingUp, TrendingDown, DollarSign, IndianRupee } from 'lucide-react';
 import StatCard from '../components/reusable/StatCard';
 import TransactionChart from '../components/TransactionChart';
+import CategoryChart from '../components/CategoryChart';
 import TransactionList from '../components/TransactionList';
+import TopCategories from '../components/reusable/TopCategories';
+import FinancialHealth from '../components/reusable/FinancialHealth';
 import AddTransactionModal from '../components/AddTransactionModal';
 import API from '../api/axios';
 
@@ -13,18 +16,32 @@ const Dashboard = () => {
   const [currency, setCurrency] = useState('USD'); // 'USD' or 'INR'
 
   const [stats, setStats] = useState(null);
+  const [categoryStats, setCategoryStats] = useState([]);
+  const [chartData, setChartData] = useState([]);
   const [transactions, setTransactions] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const fetchDashboardData = async () => {
     try {
       setIsLoading(true);
-      const [summaryRes, recentRes] = await Promise.all([
+      const calls = [
         API.get('/dashboard/summary'),
-        API.get('/dashboard/recent?n=10')
-      ]);
-      setStats(summaryRes.data.data);
-      setTransactions(recentRes.data.data);
+        API.get('/dashboard/by-category'),
+        API.get('/dashboard/trends?period=daily')
+      ];
+      
+      if (user?.role !== 'VIEWER') {
+        calls.push(API.get('/dashboard/recent?n=10'));
+      }
+      
+      const results = await Promise.all(calls);
+      setStats(results[0].data.data);
+      setCategoryStats(results[1].data.data);
+      setChartData(results[2].data.data);
+      
+      if (results[3]) {
+        setTransactions(results[3].data.data);
+      }
     } catch (error) {
       console.error('Failed to fetch dashboard data', error);
     } finally {
@@ -52,9 +69,8 @@ const Dashboard = () => {
         <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
           <div>
             <h1 className="text-3xl font-bold bg-gradient-to-r from-white to-zinc-400 bg-clip-text text-transparent">
-              Overview
+              Dashboard Overview
             </h1>
-            <p className="text-zinc-400 mt-1">Welcome back, {user?.name || 'User'}!</p>
           </div>
           
           <div className="flex items-center gap-3 w-full md:w-auto">
@@ -74,20 +90,15 @@ const Dashboard = () => {
               </button>
             </div>
 
-            <button 
-              onClick={() => setIsModalOpen(true)}
-              className="flex-1 md:flex-none flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-medium rounded-xl transition-all shadow-lg shadow-purple-600/20 active:scale-95"
-            >
-              <Plus className="w-5 h-5" />
-              Add Transaction
-            </button>
-            <button 
-              onClick={logout}
-              className="p-2.5 bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 hover:border-zinc-700 text-zinc-400 hover:text-white rounded-xl transition-all group flex items-center justify-center"
-              title="Logout"
-            >
-              <LogOut className="w-5 h-5 group-hover:text-red-400 transition-colors" />
-            </button>
+            {user?.role === 'ADMIN' && (
+              <button 
+                onClick={() => setIsModalOpen(true)}
+                className="flex-1 md:flex-none flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-medium rounded-xl transition-all shadow-lg shadow-purple-600/20 active:scale-95"
+              >
+                <Plus className="w-5 h-5" />
+                Add Transaction
+              </button>
+            )}
           </div>
         </header>
 
@@ -125,14 +136,32 @@ const Dashboard = () => {
           />
         </div>
 
-        {/* Main Content Grid */}
+        {/* Main Content Grid - Row 1: Trends & Distribution */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+          <div className="lg:col-span-2 p-6 rounded-2xl bg-zinc-900/50 border border-zinc-800/50 backdrop-blur-xl shadow-xl h-[400px]">
+            <TransactionChart data={chartData} currency={currency} isLoading={isLoading} />
+          </div>
+          <div className="p-6 rounded-2xl bg-zinc-900/50 border border-zinc-800/50 backdrop-blur-xl shadow-xl h-[400px]">
+            <CategoryChart data={categoryStats} />
+          </div>
+        </div>
+
+        {/* Column Grid - Row 2: Analysis & Tracking */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2 flex flex-col gap-6 h-[400px]">
-            <TransactionChart transactions={transactions} currency={currency} />
+          <div className="p-6 rounded-2xl bg-zinc-900/50 border border-zinc-800/50 backdrop-blur-xl shadow-xl h-[450px]">
+            <TopCategories data={categoryStats} currency={currency} />
           </div>
-          <div className="h-[400px]">
-            <TransactionList transactions={transactions} onDelete={fetchDashboardData} currency={currency} />
+          <div className="h-[450px]">
+             <FinancialHealth 
+                totalIncome={stats?.totalIncome || 0} 
+                totalExpenses={stats?.totalExpenses || 0} 
+              />
           </div>
+          {user?.role !== 'VIEWER' && (
+            <div className="h-[450px]">
+              <TransactionList transactions={transactions} onDelete={fetchDashboardData} currency={currency} />
+            </div>
+          )}
         </div>
       </div>
 

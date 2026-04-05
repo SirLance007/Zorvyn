@@ -51,7 +51,9 @@ export const getTrendsService = async (period = 'monthly') => {
     transactions.forEach(({ amount, type, date }) => {
         let key;
         const d = new Date(date);
-        if (period === 'weekly') {
+        if (period === 'daily') {
+            key = d.toISOString().split('T')[0];
+        } else if (period === 'weekly') {
             // ISO week: YYYY-WNN
             const startOfYear = new Date(d.getFullYear(), 0, 1);
             const week = Math.ceil(((d - startOfYear) / 86400000 + startOfYear.getDay() + 1) / 7);

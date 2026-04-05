@@ -5,11 +5,11 @@ import { rbac } from '../../middlewares/rbac.middleware.js';
 
 const router = Router();
 
-router.use(protect, rbac('ADMIN', 'ANALYST'));
+router.use(protect, rbac('ADMIN', 'ANALYST', 'VIEWER'));
 
 router.get('/summary', getSummary);
 router.get('/by-category', getByCategory);
 router.get('/trends', getTrends);
-router.get('/recent', getRecent);
+router.get('/recent', rbac('ADMIN', 'ANALYST'), getRecent);
 
 export default router;

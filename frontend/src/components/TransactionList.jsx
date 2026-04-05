@@ -3,9 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowUpRight, ArrowDownRight, Trash2 } from 'lucide-react';
 import API from '../api/axios';
 import { formatCurrency } from '../utils/currency';
+import { useAuth } from '../context/AuthContext';
 
 const TransactionList = ({ transactions, onDelete, currency = 'USD' }) => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const canViewAll = user?.role === 'ADMIN' || user?.role === 'ANALYST';
+  const canDelete = user?.role === 'ADMIN';
 
   const handleDelete = async (id) => {
     if (!window.confirm('Are you sure you want to delete this transaction?')) return;
@@ -30,12 +34,14 @@ const TransactionList = ({ transactions, onDelete, currency = 'USD' }) => {
     <div className="p-6 rounded-2xl bg-zinc-900/50 border border-zinc-800/50 backdrop-blur-xl shadow-xl flex flex-col h-full">
       <div className="flex justify-between items-center mb-5">
         <h3 className="text-lg font-semibold text-white">Recent Transactions</h3>
-        <button
-          onClick={() => navigate('/transactions')}
-          className="text-sm text-purple-400 hover:text-purple-300 transition-colors font-medium hover:underline underline-offset-2"
-        >
-          View All →
-        </button>
+        {canViewAll && (
+          <button
+            onClick={() => navigate('/transactions')}
+            className="text-sm text-purple-400 hover:text-purple-300 transition-colors font-medium hover:underline underline-offset-2"
+          >
+            View All →
+          </button>
+        )}
       </div>
       
       <div className="space-y-3 flex-1 overflow-y-auto pr-1">
@@ -57,12 +63,14 @@ const TransactionList = ({ transactions, onDelete, currency = 'USD' }) => {
               <span className={`font-semibold text-sm whitespace-nowrap ${tx.type === 'INCOME' ? 'text-emerald-400' : 'text-white'}`}>
                 {tx.type === 'INCOME' ? '+' : '-'}{formatCurrency(tx.amount, currency)}
               </span>
-              <button
-                onClick={() => handleDelete(tx.id || tx._id)}
-                className="text-zinc-600 hover:text-red-400 transition-colors opacity-0 group-hover:opacity-100 p-1.5 bg-zinc-900 rounded-lg"
-              >
-                <Trash2 className="w-3.5 h-3.5" />
-              </button>
+              {canDelete && (
+                <button
+                  onClick={() => handleDelete(tx.id || tx._id)}
+                  className="text-zinc-600 hover:text-red-400 transition-colors opacity-0 group-hover:opacity-100 p-1.5 bg-zinc-900 rounded-lg"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                </button>
+              )}
             </div>
           </div>
         ))}

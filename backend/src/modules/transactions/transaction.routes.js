@@ -14,8 +14,9 @@ const router = Router();
 router.use(protect);
 
 // All authenticated users can read
-router.get('/', rbac('ADMIN', 'ANALYST', 'VIEWER'), getTransactions);
-router.get('/:id', rbac('ADMIN', 'ANALYST', 'VIEWER'), getTransactionById);
+// Only ADMIN and ANALYST can read lists
+router.get('/', rbac('ADMIN', 'ANALYST'), getTransactions);
+router.get('/:id', rbac('ADMIN', 'ANALYST'), getTransactionById);
 
 // Only ADMIN can mutate
 router.post('/', rbac('ADMIN'), createTransaction);

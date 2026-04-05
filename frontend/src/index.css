@@ -27,4 +27,45 @@
     @apply bg-zinc-950 text-zinc-50;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
+
+  /* Custom ZORVYN Scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #3f3f46;
+    border-radius: 10px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #52525b;
+  }
+
+  /* Dark themed native dropdowns */
+  select,
+  option {
+    background-color: #09090b; /* zinc-950 */
+    color: #fafafa;
+  }
+  option:checked {
+    background-color: #7c3aed; /* purple-600 */
+    color: #fff;
+  }
+  option:hover {
+    background-color: #27272a; /* zinc-800 */
+  }
+
+  /* Pointer cursor on interactive elements */
+  button,
+  a,
+  select,
+  [role="button"],
+  input[type="submit"],
+  input[type="checkbox"],
+  input[type="radio"] {
+    cursor: pointer;
+  }
 }

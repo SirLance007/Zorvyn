@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { X } from 'lucide-react';
 import API from '../api/axios';
+import CustomSelect from './reusable/CustomSelect';
 
 const AddTransactionModal = ({ isOpen, onClose, onSuccess }) => {
   const [formData, setFormData] = useState({
@@ -78,20 +79,14 @@ const AddTransactionModal = ({ isOpen, onClose, onSuccess }) => {
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <label className="text-sm font-medium text-zinc-300 ml-1">Type</label>
-              <div className="relative">
-                <select 
-                  name="type"
-                  value={formData.type}
-                  onChange={handleChange}
-                  className="w-full bg-zinc-950/50 border border-zinc-800 rounded-xl py-3 px-4 text-white outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 appearance-none transition-all"
-                >
-                  <option value="EXPENSE">Expense</option>
-                  <option value="INCOME">Income</option>
-                </select>
-                <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none">
-                  <svg className="w-4 h-4 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
-                </div>
-              </div>
+              <CustomSelect
+                value={formData.type}
+                onChange={(val) => setFormData({ ...formData, type: val })}
+                options={[
+                  { value: 'EXPENSE', label: 'Expense' },
+                  { value: 'INCOME', label: 'Income' },
+                ]}
+              />
             </div>
             <div className="space-y-2">
               <label className="text-sm font-medium text-zinc-300 ml-1">Date</label>
@@ -120,25 +115,19 @@ const AddTransactionModal = ({ isOpen, onClose, onSuccess }) => {
 
           <div className="space-y-2">
             <label className="text-sm font-medium text-zinc-300 ml-1">Category</label>
-            <div className="relative">
-              <select 
-                name="category"
-                value={formData.category}
-                onChange={handleChange}
-                className="w-full bg-zinc-950/50 border border-zinc-800 rounded-xl py-3 px-4 text-white outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 appearance-none transition-all"
-              >
-                <option value="Food & Dining">Food & Dining</option>
-                <option value="Transportation">Transportation</option>
-                <option value="Housing">Housing</option>
-                <option value="Entertainment">Entertainment</option>
-                <option value="Salary">Salary</option>
-                <option value="Investment">Investment</option>
-                <option value="Other">Other</option>
-              </select>
-              <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none">
-                  <svg className="w-4 h-4 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
-              </div>
-            </div>
+            <CustomSelect
+              value={formData.category}
+              onChange={(val) => setFormData({ ...formData, category: val })}
+              options={[
+                { value: 'Food & Dining', label: 'Food & Dining' },
+                { value: 'Transportation', label: 'Transportation' },
+                { value: 'Housing', label: 'Housing' },
+                { value: 'Entertainment', label: 'Entertainment' },
+                { value: 'Salary', label: 'Salary' },
+                { value: 'Investment', label: 'Investment' },
+                { value: 'Other', label: 'Other' },
+              ]}
+            />
           </div>
 
           <div className="space-y-2">

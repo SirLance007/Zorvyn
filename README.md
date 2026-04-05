@@ -16,11 +16,15 @@ This diagram demonstrates the high-level flow of a user request mapping linearly
 A detailed look at the internal request handling pipeline. Notice how every request is first scrubbed by `Helmet` and `Rate-Limiting` to prevent abuse. It then undergoes rigorous `JWT Authentication` and `RBAC (Role-Based Access Control)` verification. Only perfectly validated, authorized payloads using `Zod` ever reach the database engines.
 ![Detailed Architecture](./assets/Detailed_Architecture.png)
 
-### 3. API Routing Topology
+### 3. Role-Based Access Control (RBAC) Hierarchy
+Understanding how permissions propagate. A new user is defaulted to `VIEWER` and can only view dashboard totals. The system's root `ADMIN` assigns roles via our protected endpoints, upgrading users to `ANALYST` (view full logs) or granting them full `ADMIN` power (modify records).
+![Roles & Permissions](./assets/Roles.png)
+
+### 4. API Routing Topology
 A complete mapping of all endpoints exposed by our backend structure. The endpoints are strictly split by domain (`/auth`, `/dashboard`, `/transactions`, `/users`) with specific protection boundaries clearly illustrated. Notice how Dashboard APIs separate aggregation requests (Summing vs Trends).
 ![API Routes](./assets/API_ROUTES.png)
 
-### 4. Database Models & Schema Design
+### 5. Database Models & Schema Design
 To guarantee analytical accuracy for financial calculations, we utilize a strictly typed relational database (PostgreSQL) managed by Prisma. This schema demonstrates our use of UUID primary keys, typed enum restrictions (`Type` & `Role`), a `1-to-Many` Foreign Key connection, and explicit soft-delete flagging to prevent destructive record loss.
 ![Database Models](./assets/Models.png)
 

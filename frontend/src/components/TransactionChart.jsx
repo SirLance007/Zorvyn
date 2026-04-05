@@ -20,42 +20,39 @@ const CustomTooltip = ({ active, payload, label }) => {
   return null;
 };
 
-const TransactionChart = ({ transactions = [] }) => {
+const TransactionChart = ({ data = [], currency = 'USD', isLoading = false }) => {
   const chartData = useMemo(() => {
     const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-    const dataMap = {};
-    const result = [];
+    
+    // If we have data from API, format it
+    if (data && data.length > 0) {
+      return data.map(item => {
+        const d = new Date(item.period);
+        return {
+          name: days[d.getDay()],
+          income: item.income,
+          expense: item.expense
+        };
+      }).slice(-7); // Get only last 7 entries
+    }
 
-    // Build last 7 days (chronological: oldest → newest)
+    // Fallback/Loading state: Build last 7 empty days
+    const result = [];
     for (let i = 6; i >= 0; i--) {
       const d = new Date();
       d.setDate(d.getDate() - i);
-      const dayName = days[d.getDay()];
-      const entry = { name: dayName, income: 0, expense: 0 };
-      dataMap[d.toDateString()] = entry;
-      result.push(entry);
+      result.push({ name: days[d.getDay()], income: 0, expense: 0 });
     }
-
-    // Bucket transactions into days
-    transactions.forEach(tx => {
-      const key = new Date(tx.date).toDateString();
-      if (dataMap[key]) {
-        const amount = parseFloat(tx.amount) || 0;
-        if (tx.type === 'INCOME') dataMap[key].income = parseFloat((dataMap[key].income + amount).toFixed(2));
-        else if (tx.type === 'EXPENSE') dataMap[key].expense = parseFloat((dataMap[key].expense + amount).toFixed(2));
-      }
-    });
-
     return result;
-  }, [transactions]);
+  }, [data]);
 
   const formatYAxis = (value) => {
-    if (value >= 1000) return `$${(value / 1000).toFixed(1)}k`;
-    return `$${value}`;
+    if (value >= 1000) return `${currency === 'INR' ? '₹' : '$'}${(value / 1000).toFixed(1)}k`;
+    return `${currency === 'INR' ? '₹' : '$'}${value}`;
   };
 
   return (
-    <div className="w-full h-full min-h-[300px] p-6 rounded-2xl bg-zinc-900/50 border border-zinc-800/50 backdrop-blur-xl shadow-xl">
+    <div className="w-full h-full">
       <h3 className="text-lg font-semibold text-white mb-1">Cash Flow Overview</h3>
       <p className="text-zinc-500 text-xs mb-5">Last 7 days</p>
       <div className="h-[240px] w-full">
