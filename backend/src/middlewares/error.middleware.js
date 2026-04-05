@@ -1,5 +1,6 @@
 import ApiError from '../utils/ApiError.js';
-import { Prisma } from '@prisma/client';
+import pkg from '@prisma/client';
+const { Prisma } = pkg;
 
 const errorHandler = (err, req, res, next) => {
     let error = err;
