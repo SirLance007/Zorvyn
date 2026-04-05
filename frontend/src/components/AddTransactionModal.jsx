@@ -1,0 +1,174 @@
+import React, { useState } from 'react';
+import { X } from 'lucide-react';
+import API from '../api/axios';
+
+const AddTransactionModal = ({ isOpen, onClose, onSuccess }) => {
+  const [formData, setFormData] = useState({
+    type: 'EXPENSE',
+    date: new Date().toISOString().split('T')[0],
+    description: '',
+    category: 'Food & Dining',
+    amount: ''
+  });
+  
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    
+    if (!formData.amount || !formData.description) {
+      setError('Amount and Description are required.');
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      await API.post('/transactions', {
+        ...formData,
+        amount: Number(formData.amount)
+      });
+      
+      if (onSuccess) onSuccess(); 
+      
+      // Reset after success
+      setFormData({
+        type: 'EXPENSE',
+        date: new Date().toISOString().split('T')[0],
+        description: '',
+        category: 'Food & Dining',
+        amount: ''
+      });
+      onClose();
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to add transaction. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // isOpen -> return false
+  if (!isOpen) return null;
+  
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/60 backdrop-blur-sm transition-all duration-300">
+      <div className="relative w-full max-w-lg p-6 bg-zinc-900 border border-zinc-800 rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+        {/* Decor */}
+        <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-purple-600/10 blur-[80px] pointer-events-none" />
+
+        <div className="flex justify-between items-center mb-6 relative z-10">
+          <h2 className="text-xl font-bold bg-gradient-to-r from-white to-zinc-400 bg-clip-text text-transparent">Add Transaction</h2>
+          <button onClick={onClose} className="p-2 rounded-xl hover:bg-zinc-800 text-zinc-400 hover:text-white transition-colors">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        {error && (
+          <div className="mb-4 p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm text-center relative z-10">
+            {error}
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="space-y-5 relative z-10">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-zinc-300 ml-1">Type</label>
+              <div className="relative">
+                <select 
+                  name="type"
+                  value={formData.type}
+                  onChange={handleChange}
+                  className="w-full bg-zinc-950/50 border border-zinc-800 rounded-xl py-3 px-4 text-white outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 appearance-none transition-all"
+                >
+                  <option value="EXPENSE">Expense</option>
+                  <option value="INCOME">Income</option>
+                </select>
+                <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none">
+                  <svg className="w-4 h-4 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                </div>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-zinc-300 ml-1">Date</label>
+              <input 
+                type="date" 
+                name="date"
+                value={formData.date}
+                onChange={handleChange}
+                className="w-full bg-zinc-950/50 border border-zinc-800 rounded-xl py-3 px-4 text-white outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 transition-all [color-scheme:dark]" 
+              />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-zinc-300 ml-1">Description</label>
+            <input 
+              type="text" 
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              placeholder="e.g. Salary, Groceries" 
+              className="w-full bg-zinc-950/50 border border-zinc-800 rounded-xl py-3 px-4 text-white placeholder:text-zinc-600 outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 transition-all" 
+              required
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-zinc-300 ml-1">Category</label>
+            <div className="relative">
+              <select 
+                name="category"
+                value={formData.category}
+                onChange={handleChange}
+                className="w-full bg-zinc-950/50 border border-zinc-800 rounded-xl py-3 px-4 text-white outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 appearance-none transition-all"
+              >
+                <option value="Food & Dining">Food & Dining</option>
+                <option value="Transportation">Transportation</option>
+                <option value="Housing">Housing</option>
+                <option value="Entertainment">Entertainment</option>
+                <option value="Salary">Salary</option>
+                <option value="Investment">Investment</option>
+                <option value="Other">Other</option>
+              </select>
+              <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none">
+                  <svg className="w-4 h-4 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-zinc-300 ml-1">Amount</label>
+            <div className="relative">
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500">$</span>
+              <input 
+                type="number" 
+                step="0.01" 
+                name="amount"
+                value={formData.amount}
+                onChange={handleChange}
+                placeholder="0.00" 
+                className="w-full bg-zinc-950/50 border border-zinc-800 rounded-xl py-3 pl-8 pr-4 text-white placeholder:text-zinc-600 outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 transition-all" 
+                required
+              />
+            </div>
+          </div>
+
+          <button 
+            type="submit" 
+            disabled={isSubmitting}
+            className={`w-full mt-6 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-medium py-3 rounded-xl transition-all shadow-lg shadow-purple-600/20 active:scale-[0.98] ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''}`}
+          >
+            {isSubmitting ? 'Saving...' : 'Save Transaction'}
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+export default AddTransactionModal;
