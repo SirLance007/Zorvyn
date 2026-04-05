@@ -54,7 +54,6 @@ const ManageUsers = () => {
 
   return (
     <div className="min-h-screen bg-zinc-950 text-white p-4 sm:p-6 lg:p-8 relative">
-      {/* Background Ambience */}
       <div className="fixed top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-blue-600/10 blur-[120px] pointer-events-none z-0" />
       
       {isLoading && (
@@ -76,7 +75,7 @@ const ManageUsers = () => {
 
         <div className="bg-zinc-900/50 border border-zinc-800/50 rounded-2xl overflow-hidden backdrop-blur-sm">
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm text-zinc-400">
+            <table className="w-full min-w-[700px] text-left text-sm text-zinc-400">
               <thead className="bg-zinc-900/80 text-zinc-300 uppercase text-xs">
                 <tr>
                   <th className="px-6 py-4 font-medium">User Name</th>

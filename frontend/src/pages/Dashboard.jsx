@@ -55,7 +55,6 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-zinc-950 text-white relative overflow-x-hidden">
-      {/* Background Ambience */}
       <div className="fixed top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-purple-600/10 blur-[120px] pointer-events-none z-0" />
       <div className="fixed bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-emerald-600/10 blur-[120px] pointer-events-none z-0" />
 
@@ -65,8 +64,8 @@ const Dashboard = () => {
       )}
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 pb-8">
-        {/* Sticky Header Wrapper */}
-        <div className="sticky top-0 z-40 bg-zinc-950/80 backdrop-blur-md border-b border-white/[0.03] -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 mb-8 pb-4 pt-8">
+        {/* Sticky Header Wrapper - Adjusted for Mobile Top Bar with reduced padding and extra bottom margin to prevent overlap */}
+        <div className="sticky md:top-0 top-[60px] z-40 bg-zinc-950/80 backdrop-blur-md border-b border-white/[0.03] -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 md:mb-8 mb-20 pb-4 md:pt-8 pt-4">
           <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
               <h1 className="text-3xl font-bold bg-gradient-to-r from-white to-zinc-400 bg-clip-text text-transparent">

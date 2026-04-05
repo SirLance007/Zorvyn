@@ -20,7 +20,23 @@ const SidebarLayout = ({ children }) => {
   }
 
   return (
-    <div className="flex min-h-screen bg-zinc-950 text-white overflow-hidden relative">
+    <div className="flex flex-col md:flex-row min-h-screen bg-zinc-950 text-white overflow-hidden relative">
+      {/* Mobile Top Header */}
+      <div className="md:hidden flex items-center justify-between p-4 border-b border-zinc-900 bg-zinc-950/80 backdrop-blur-xl sticky top-0 z-50">
+        <div>
+          <h1 className="text-xl font-black tracking-widest bg-gradient-to-r from-purple-500 via-indigo-500 to-emerald-500 bg-clip-text text-transparent">
+            ZORVYN
+          </h1>
+        </div>
+        <button
+          onClick={logout}
+          className="p-2 text-red-400 hover:bg-red-500/10 rounded-lg transition-colors border border-transparent hover:border-red-500/20"
+          title="Sign Out"
+        >
+          <LogOut className="w-5 h-5" />
+        </button>
+      </div>
+
       {/* Sidebar for Desktop */}
       <aside className="w-64 border-r border-zinc-900 bg-zinc-950/80 backdrop-blur-xl hidden md:flex flex-col relative z-20">
         <div className="p-8 border-b border-zinc-900">
@@ -73,9 +89,30 @@ const SidebarLayout = ({ children }) => {
       </aside>
 
       {/* Main Content Area */}
-      <main className="flex-1 relative h-screen overflow-y-auto overflow-x-hidden">
+      <main className="flex-1 relative h-screen overflow-y-auto overflow-x-hidden pb-20 md:pb-0">
         {children}
       </main>
+
+      {/* Mobile Bottom Navigation */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-zinc-950/90 backdrop-blur-xl border-t border-zinc-900 flex justify-around items-center p-2 pb-6">
+        {navItems.map((item) => {
+          const isActive = location.pathname.startsWith(item.path);
+          return (
+            <Link
+              key={item.path}
+              to={item.path}
+              className={`flex flex-col items-center gap-1 p-2 transition-all ${
+                isActive ? 'text-purple-400' : 'text-zinc-500'
+              }`}
+            >
+              <div className="p-1">
+                {item.icon}
+              </div>
+              <span className="text-[10px] font-bold uppercase tracking-widest">{item.name}</span>
+            </Link>
+          )
+        })}
+      </nav>
     </div>
   );
 };
