@@ -30,6 +30,36 @@ To guarantee analytical accuracy for financial calculations, we utilize a strict
 
 ---
 
+## 🔓 Test Credentials
+
+To explore the **ZORVYN Finance OS** and its Role-Based Access Control (RBAC), you can use the following pre-seeded accounts. Each role provides a different level of access and UI experience.
+
+| Role | Email | Password | Permissions |
+| :--- | :--- | :--- | :--- |
+| **ADMIN** | `admin@finance.com` | `admin123` | Full access, user management, and data mutation. |
+| **ANALYST** | `analyst@finance.com` | `analyst123` | View-only access to all dashboard and transaction logs. |
+| **VIEWER** | `viewer@finance.com` | `password123` | Access to high-level dashboard summaries only. |
+
+---
+
+## 🖥️ Role-Based UI Previews
+
+Below is how the **ZORVYN** dashboard adapts its interface based on the logged-in user's role.
+
+### 👑 Admin View
+Full control with the "Manage Users" and "Add Transaction" capabilities.
+![Admin UI Preview](./assets/Admin.png)
+
+### 📊 Analyst View
+Comprehensive data visualization and transaction logs, but without mutation powers.
+![Analyst UI Preview](./assets/Analyst.png)
+
+### 👁️ Viewer View
+A high-level, "Observer" dashboard showing only key metrics and trends.
+![Viewer UI Preview](./assets/Viewer.png)
+
+---
+
 ## 🛠 Features Implemented
 
 *   **Custom Global Error Handling:** Utilizing `ApiError` and `ApiResponse` wrappers guarantees that the client *always* receives a predictable `{ success, data, message }` JSON shape.
@@ -70,3 +100,13 @@ npm test
 # Visit Live Swagger Docs
 http://localhost:5001/api-docs
 ```
+
+---
+
+## 📝 Final Note
+
+I have built similar financial tracking systems in the past, but I found the challenge of implementing such a robust, modular RBAC system and the premium "ZORVYN" aesthetic to be incredibly fun and interesting to revisit and refine.
+
+Feel free to check out one of my previous e-commerce projects here: [Pettshop E-commerce](https://github.com/SirLance007/Pettshop-ecommerce)
+
+**Built with ❤️ for High-Performance Finance.**
