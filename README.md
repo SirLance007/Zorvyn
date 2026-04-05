@@ -33,21 +33,28 @@ ZORVYN's interface transforms dynamically based on your permissions.
 
 ---
 
-## 🧠 How it Works (Logic & Architecture)
-If you are curious about the "engine" under the hood, here is the technical flow:
+## 🧠 Logic & Architecture Deep Dive
+If you are curious about the "engine" under the hood, here is the complete technical breakdown of ZORVYN.
 
-### **System Data Flow**
+### 1. System Request Flow
 Every transaction undergoes a multi-layer security check before reaching the database.
 ![System Architecture](./assets/Simple_Overview.png)
 
-### **Permissions Hierarchy**
+### 2. Request Lifecycle & Modular Pipeline
+A detailed look at the internal request handling—from Helmet security to Zod validation.
+![Detailed Architecture](./assets/Detailed_Architecture.png)
+
+### 3. Permissions Hierarchy (RBAC)
 Our RBAC system is modular and strictly enforced at both the API and UI levels.
 ![Role Logic](./assets/Roles.png)
 
-### **API & Data Modeling**
-Clean, modular backend structure built for scalability.
-- **RESTful API Mapping:** Visualized endpoints for different domains.
-- **Database Schema:** PostgreSQL + Prisma for rock-solid transaction integrity.
+### 4. API Routing Topology
+A complete mapping of all endpoints exposed by our backend structure.
+![API Routes](./assets/API_ROUTES.png)
+
+### 5. Database Schema & Data Models
+PostgreSQL + Prisma schema design for high-integrity financial calculations.
+![Database Models](./assets/Models.png)
 
 ---
 
