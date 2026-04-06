@@ -1,17 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, ArrowUpRight, ArrowDownRight, Trash2, Search, Filter } from 'lucide-react';
+import { ArrowUpRight, ArrowDownRight, Trash2, Search, Pencil } from 'lucide-react';
 import API from '../api/axios';
 import { formatCurrency } from '../utils/currency';
 import CustomSelect from '../components/reusable/CustomSelect';
+import EditTransactionModal from '../components/EditTransactionModal';
+import { useAuth } from '../context/AuthContext';
 
 const Transactions = ({ currency = 'USD' }) => {
     const navigate = useNavigate();
+    const { user } = useAuth();
     const [transactions, setTransactions] = useState([]);
     const [pagination, setPagination] = useState({ total: 0, page: 1, totalPages: 1 });
     const [isLoading, setIsLoading] = useState(true);
     const [filters, setFilters] = useState({ type: '', category: '', from: '', to: '' });
     const [page, setPage] = useState(1);
+    const [editingTx, setEditingTx] = useState(null);
 
     const fetchTransactions = async (currentPage = 1) => {
         try {
@@ -154,9 +158,16 @@ const Transactions = ({ currency = 'USD' }) => {
                                                 {tx.type === 'INCOME' ? '+' : '-'}{formatCurrency(tx.amount, currency)}
                                             </td>
                                             <td className="px-6 py-4">
-                                                <button onClick={() => handleDelete(tx.id)} className="opacity-0 group-hover:opacity-100 p-1.5 text-zinc-600 hover:text-red-400 bg-zinc-900 rounded-lg transition-all">
-                                                    <Trash2 className="w-4 h-4" />
-                                                </button>
+                                                <div className="flex items-center justify-end gap-1">
+                                                    {user?.role === 'ADMIN' && (
+                                                        <button onClick={() => setEditingTx(tx)} className="opacity-0 group-hover:opacity-100 p-1.5 text-zinc-600 hover:text-indigo-400 bg-zinc-900 rounded-lg transition-all">
+                                                            <Pencil className="w-4 h-4" />
+                                                        </button>
+                                                    )}
+                                                    <button onClick={() => handleDelete(tx.id)} className="opacity-0 group-hover:opacity-100 p-1.5 text-zinc-600 hover:text-red-400 bg-zinc-900 rounded-lg transition-all">
+                                                        <Trash2 className="w-4 h-4" />
+                                                    </button>
+                                                </div>
                                             </td>
                                         </tr>
                                     ))}
@@ -183,6 +194,12 @@ const Transactions = ({ currency = 'USD' }) => {
                     </div>
                 )}
             </div>
+            <EditTransactionModal
+                isOpen={!!editingTx}
+                onClose={() => setEditingTx(null)}
+                onSuccess={() => { setEditingTx(null); fetchTransactions(page); }}
+                transaction={editingTx}
+            />
         </div>
     );
 };
