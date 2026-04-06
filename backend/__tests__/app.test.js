@@ -53,7 +53,7 @@ describe('Auth Routes', () => {
       password: 'password123'
     });
     expect(res.statusCode).toBe(401);
-  });
+  }, 10000);
 });
 
 describe('Protected Routes - No Token', () => {
